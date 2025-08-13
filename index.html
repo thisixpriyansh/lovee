@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Leo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            touch-action: none;
+        }
+
+        body {
+            overflow: hidden;
+            display: flex;
+            background: #111;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        #drag-container, #spin-container {
+            position: relative;
+            display: flex;
+            margin: auto;
+            transform-style: preserve-3d;
+            transform: rotateX(-10deg);
+            width: 200px;
+            height: 280px;
+        }
+
+        #drag-container img {
+            transform-style: preserve-3d;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            line-height: 200px;
+            font-size: 50px;
+            text-align: center;
+            box-shadow: 0 0 8px #fff;
+            -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        #drag-container img:hover {
+            box-shadow: 0 0 15px #fffd;
+            -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0007);
+        }
+
+        /* Position each image around the cylinder */
+        #drag-container img:nth-child(1) { transform: rotateY(0deg) translateZ(408px); }
+        #drag-container img:nth-child(2) { transform: rotateY(51.4deg) translateZ(408px); }
+        #drag-container img:nth-child(3) { transform: rotateY(102.8deg) translateZ(408px); }
+        #drag-container img:nth-child(4) { transform: rotateY(154.2deg) translateZ(408px); }
+        #drag-container img:nth-child(5) { transform: rotateY(205.6deg) translateZ(408px); }
+        #drag-container img:nth-child(6) { transform: rotateY(257deg) translateZ(408px); }
+        #drag-container img:nth-child(7) { transform: rotateY(308.4deg) translateZ(408px); }
+
+        #drag-container p {
+            font-family: serif;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(90deg);
+            color: #fff;
+            font-size: 20px;
+        }
+
+        #ground {
+            width: 900px;
+            height: 900px;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(90deg);
+            background: radial-gradient(center center, farthest-side, #9993, transparent);
+        }
+
+        #music-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Loading placeholder for images */
+        .image-placeholder {
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="drag-container">
+        <div id="spin-container">
+            <!-- Using placeholder images since local paths won't work -->
+            <img src="D:\Desktop\New folder\images\7c3271fc-4e06-4be8-b140-7f28cba46cfc.jpeg" alt="Photo 2" onerror="this.className='image-placeholder'; this.innerHTML='Image 2';">
+            <img src="D:\Desktop\New folder\images\1369378f-c590-49bf-85bc-4a0ada6cc583.jpeg" alt="Photo 1" onerror="this.className='image-placeholder'; this.innerHTML='Image 1';">
+            <img src="D:\Desktop\New folder\images\corazon hecho de huellas.jpeg" alt="Photo 3" onerror="this.className='image-placeholder'; this.innerHTML='Image 3';">
+            <img src="D:\Desktop\New folder\images\crusing 🛳️🛳️ Costa Pacifica ‘23.jpeg" alt="Photo 4" onerror="this.className='image-placeholder'; this.innerHTML='Image 4';">
+            <img src="D:\Desktop\New folder\images\ff1c4587-8713-4600-a394-dda982e185fe.jpeg" alt="Photo 5" onerror="this.className='image-placeholder'; this.innerHTML='Image 5';">
+            <img src="D:\Desktop\New folder\images\Flower lover 💖🌸 🐝  Todos los días bouquets del….jpg" alt="Photo 6" onerror="this.className='image-placeholder'; this.innerHTML='Image 6';">
+            <img src="D:\Desktop\New folder\images\Ig_ dainalachance.jpeg" alt="Photo 7" onerror="this.className='image-placeholder'; this.innerHTML='Image 7';">
+
+            <p>Made by <mark>The Leo</mark></p>
+        </div>
+        <div id="ground"></div>
+    </div>
+
+    <div id="music-container"></div>
+
+    <script>
+        // Select containers
+        const dragContainer = document.getElementById("drag-container");
+        const spinContainer = document.getElementById("spin-container");
+
+        let startX, startY;
+        let currentX = 0;
+        let currentY = 10;
+        let autoRotate = true;
+        let rotateSpeed = -60; // degrees per second
+        let tX = 0, tY = 10;
+
+        // Spin function
+        function spinAnimation() {
+            spinContainer.style.transform = `rotateX(${tY}deg) rotateY(${tX}deg)`;
+        }
+
+        // Autoplay rotation
+        function autoSpin() {
+            if (autoRotate) {
+                tX += rotateSpeed / 60;
+                spinAnimation();
+            }
+            requestAnimationFrame(autoSpin);
+        }
+        autoSpin();
+
+        // Mouse drag controls
+        dragContainer.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            startX = e.clientX;
+            startY = e.clientY;
+            autoRotate = false;
+
+            const onMouseMove = (e) => {
+                let deltaX = e.clientX - startX;
+                let deltaY = e.clientY - startY;
+                tX += deltaX * 0.3;
+                tY -= deltaY * 0.3;
+                spinAnimation();
+                startX = e.clientX;
+                startY = e.clientY;
+            };
+
+            const onMouseUp = () => {
+                autoRotate = true;
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+            };
+
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
+        });
+
+        // Touch controls
+        dragContainer.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            autoRotate = false;
+        });
+
+        dragContainer.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            let deltaX = e.touches[0].clientX - startX;
+            let deltaY = e.touches[0].clientY - startY;
+            tX += deltaX * 0.3;
+            tY -= deltaY * 0.3;
+            spinAnimation();
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        dragContainer.addEventListener("touchend", () => {
+            autoRotate = true;
+        });
+
+        // Prevent default touch behavior
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Optional: Music functionality
+        const musicContainer = document.getElementById("music-container");
+        if (musicContainer) {
+            const audio = document.createElement("audio");
+            audio.src = ""; // Replace with your music file path
+            audio.loop = true;
+            musicContainer.appendChild(audio);
+            
+            // Add click to play music (due to autoplay restrictions)
+            document.addEventListener('click', () => {
+                audio.play().catch(() => {
+                    console.log("Audio play failed");
+                });
+            }, { once: true });
+        }
+    </script>
+</body>
+</html>
